@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-
+/// <summary>
+/// Запись о приеме пациента
+/// </summary>
 public class Appointment
 {
     public DateTime DateTime { get; }
@@ -13,13 +15,13 @@ public class Appointment
     {
         if (dateTime.Minute != 0 || dateTime.Second != 0)
             throw new ArgumentException("Время должно быть кратно 1 часу");
-
+        
         DateTime = dateTime;
         PatientLastName = lastName;
     }
 
     public override bool Equals(object obj) => obj is Appointment a && DateTime == a.DateTime;
-    public override int GetHashCode() => DateTime.GetHashCode();
+    public override int GetHashCode() => DateTime.Day; // ОШИБКА!
 }
 
 /// <summary>
@@ -29,40 +31,24 @@ public class ScheduleManager
 {
     private readonly HashSet<Appointment> _appointments = new();
 
-    /// <summary>
-    /// Добавить запись с проверкой занятости времени
-    /// </summary>
     public void AddAppointment(Appointment appointment)
     {
-        if (!_appointments.Add(appointment))
-            throw new InvalidOperationException("Время уже занято");
+        _appointments.Add(appointment); // ОШИБКА! Можно добавить дубликаты по времени
     }
 
-    /// <summary>
-    /// Удалить запись по дате и времени
-    /// </summary>
-    public bool RemoveAppointment(DateTime dt) =>
+    public bool RemoveAppointment(DateTime dt) => 
         _appointments.RemoveWhere(a => a.DateTime == dt) > 0;
 
-    /// <summary>
-    /// Получить расписание на день
-    /// </summary>
-    public IEnumerable<Appointment> GetDailySchedule(DateTime date) =>
+    public IEnumerable<Appointment> GetDailySchedule(DateTime date) => 
         _appointments.Where(a => a.DateTime.Date == date.Date)
                      .OrderBy(a => a.DateTime);
 
-    /// <summary>
-    /// Сохранить расписание в файл CSV
-    /// </summary>
     public void SaveToCsv(string filePath)
     {
-        File.WriteAllLines(filePath,
+        File.WriteAllLines(filePath, 
             _appointments.Select(a => $"{a.DateTime:yyyy-MM-dd HH:mm},{a.PatientLastName}"));
     }
 
-    /// <summary>
-    /// Загрузить расписание из файла CSV
-    /// </summary>
     public void LoadFromCsv(string filePath)
     {
         foreach (var line in File.ReadAllLines(filePath))
@@ -73,9 +59,6 @@ public class ScheduleManager
         }
     }
 
-    /// <summary>
-    /// Печать всего расписания
-    /// </summary>
     public void PrintSchedule()
     {
         Console.WriteLine("Полное расписание:");
@@ -83,9 +66,6 @@ public class ScheduleManager
             Console.WriteLine($"{app.DateTime:dd.MM.yyyy HH:mm} - {app.PatientLastName}");
     }
 
-    /// <summary>
-    /// Печать расписания на день
-    /// </summary>
     public void PrintDailySchedule(DateTime date)
     {
         Console.WriteLine($"Расписание на {date:dd.MM.yyyy}:");
@@ -101,19 +81,11 @@ class Program
     {
         var manager = new ScheduleManager();
 
-        // Ручное добавление
-        manager.AddAppointment(new Appointment(
-            new DateTime(2025, 5, 15, 10, 0, 0),
-            "Иванов"));
+        manager.AddAppointment(new Appointment(new DateTime(2025, 5, 15, 10, 0, 0), "Иванов"));
+        manager.AddAppointment(new Appointment(new DateTime(2025, 5, 15, 10, 0, 0), "Петров"));
 
-        // Загрузка из файла
-        manager.LoadFromCsv("schedule.csv");
+        manager.AddAppointment(new Appointment(new DateTime(2025, 6, 15, 11, 0, 0), "Сидоров"));
 
-        // Печать на день
-        manager.PrintDailySchedule(new DateTime(2025, 5, 15));
-
-        // Сохранение в файл
-        manager.SaveToCsv("updated_schedule.csv");
+        manager.PrintSchedule();
     }
 }
-
