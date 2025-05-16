@@ -34,7 +34,7 @@ public class ScheduleManager
     /// </summary>
     public void AddAppointment(Appointment appointment)
     {
-        _appointments.Add(appointment); // ОШИБКА! Можно добавить дубликаты по времени
+        _appointments.Add(appointment);
     }
 
     /// <summary>
