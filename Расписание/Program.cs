@@ -101,20 +101,19 @@ class Program
         var manager = new ScheduleManager();
 
         // Ручное добавление
-        manager.AddAppointment(new Appointment(
-            new DateTime(2025, 5, 15, 10, 0, 0),
+        manager.AddAppointment(new Appointment(new DateTime(2025, 5, 15, 10, 0, 0),
             "Иванов"));
 
         // Загрузка из файла
         manager.LoadFromCsv("schedule.csv");
-
         manager.PrintSchedule();
 
         // Печать на день
         manager.PrintDailySchedule(new DateTime(2025, 5, 15));
 
-        manager.AddAppointment(new Appointment(new DateTime(2025, 5, 11, 0, 0, 0), "Ершов"));
-        
+        manager.AddAppointment(new Appointment(new DateTime(2025, 5, 11, 10, 30, 01),
+            "Смуглянов"));
+
         manager.PrintSchedule();
 
         // Сохранение в файл
