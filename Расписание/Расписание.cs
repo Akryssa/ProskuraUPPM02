@@ -11,7 +11,7 @@ public class Appointment
 
     public Appointment(DateTime dateTime, string lastName)
     {
-        if (dateTime.Minute != 0 && dateTime.Second != 0)
+        if (dateTime.Minute != 0 || dateTime.Second != 0)
             throw new ArgumentException("Время должно быть кратно 1 часу");
 
         DateTime = dateTime;
