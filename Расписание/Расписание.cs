@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,8 +34,7 @@ public class ScheduleManager
     /// </summary>
     public void AddAppointment(Appointment appointment)
     {
-        if (!_appointments.Add(appointment))
-            throw new InvalidOperationException("Время уже занято");
+        _appointments.Add(appointment);
     }
 
     /// <summary>
@@ -109,11 +108,16 @@ class Program
         // Загрузка из файла
         manager.LoadFromCsv("schedule.csv");
 
+        manager.PrintSchedule();
+
         // Печать на день
         manager.PrintDailySchedule(new DateTime(2025, 5, 15));
+
+        manager.AddAppointment(new Appointment(new DateTime(2025, 5, 11, 0, 0, 0), "Ершов"));
+        
+        manager.PrintSchedule();
 
         // Сохранение в файл
         manager.SaveToCsv("updated_schedule.csv");
     }
 }
-
